@@ -96,7 +96,11 @@ class GameServer:
                         self.game.keypress(data["key"][0])
                     else:
                         self.game.keypress("")
-
+                if data["cmd"] == "keys" and self.current_player.ws == websocket:
+                    logger.debug((self.current_player.name, data))
+                    for key in data["keys"]:
+                        self.game.keypress(key)
+                        await self.game.next_frame()
         except websockets.exceptions.ConnectionClosed as closed_reason:
             logger.info("Client disconnected: %s", closed_reason)
             if websocket in self.viewers:
